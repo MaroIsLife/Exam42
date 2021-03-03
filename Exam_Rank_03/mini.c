@@ -43,7 +43,7 @@ int main(int argc,char **argv)
         return(write_error(ER_FILE));
 
     char id;
-    float idx, idy;
+    float idx, idy; 
     float rad;
     char c;
     int read;
