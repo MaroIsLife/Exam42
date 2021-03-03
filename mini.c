@@ -1,55 +1,63 @@
 #include <stdio.h>
-#include <unistd.h>
-#include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 #include <math.h>
-#define ER_ARG "Error: argument\n"
-#define ER_FILE "Error: Operation file corrupted\n"
+#define ER_ARG "Error Arg"
+#define ER_FILE "Error File"
 
+
+int ft_strlen(char *s)
+{
+    int i = 0;
+
+    while (s[i] != '\0')
+        i++;
+
+        return (i);
+}
 
 int write_error(char *s)
 {
-    write(1,s,strlen(s));
+    write(1,s,ft_strlen(s));
     return (1);
 }
 
 
-int main(int argc, char **argv)
+int main(int argc,char **argv)
 {
-
     FILE *file;
-    int width, height;
-    char background;
-
-    if (argc != 2)
-        return(write_error(ER_ARG));
-
 
     file = fopen(argv[1],"r");
     if (file == NULL)
         return(write_error(ER_FILE));
-
+    
+    int width, height;
+    char background;
     if (fscanf(file,"%d %d %c\n",&width,&height,&background) != 3)
         return (write_error(ER_FILE));
-    
-    if ((width < 0 && width >= 300) && (height < 0 && height >= 300))
-        return (write_error(ER_FILE));
 
-    char paper[height * width];
+    if (width <= 0 && width > 300)
+        return(write_error(ER_FILE));
     
-    memset(paper,background,width * height);
-    
+    if (height <= 0 && height > 300)
+        return(write_error(ER_FILE));
+
+    char id;
+    float idx, idy;
+    float rad;
+    char c;
     int read;
-    float idx ,idy , rad;
-    char id ,c;
-    int x, y;
     float distance;
+    char paper[width * height];
 
-    while((read = fscanf(file,"%c %f %f %f %c\n",&id,&idx,&idy,&rad,&c)) == 5)
+    memset(paper,background,width * height);
+
+    int y, x;
+
+    while ((read = fscanf(file,"%c %f %f %f %c\n",&id,&idx,&idy,&rad,&c)) == 5)
     {
         if (rad <= 0 || !(id == 'c' || id == 'C'))
-            return (write_error(ER_FILE));
-
+            return(write_error(ER_FILE));
         y = 0;
         while (y < height)
         {
@@ -60,21 +68,30 @@ int main(int argc, char **argv)
                 if (distance <= rad)
                 {
                     if (id == 'C')
+                    {
                         paper[y * width + x] = c;
+                    }
                     else if ((rad - distance) < 1. && id == 'c')
-                        paper[y * width + x] = c;   
+                    {
+                        paper[y * width + x] = c;
+                    }
                 }
-                x++; 
+                x++;
             }
             y++;
         }
+
     }
-    y = 0;
-    while (y < height)
-    {
-        write(1, paper + (y * width), width);
-        write(1,"\n",1);
-        y++;
-    }
+
+if (read == -1)
+    return(write_error(ER_FILE));
+y = 0;
+while (y < height)
+{
+    write(1,paper + (y * width),width);
+    write(1,"\n",1);
+    y++;
+}
+
     return (0);
 }
