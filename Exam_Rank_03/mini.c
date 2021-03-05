@@ -26,6 +26,9 @@ int write_error(char *s)
 int main(int argc,char **argv)
 {
     FILE *file;
+    
+    if (argc != 2)
+        return(write_error(ER_ARG));
 
     file = fopen(argv[1],"r");
     if (file == NULL)
